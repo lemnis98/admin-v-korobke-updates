@@ -39,3 +39,10 @@
 /* буквы на значках клиентов в тёмной теме были почти не видны */
 @media (min-width:1100px) and (prefers-color-scheme:dark){:root:not([data-theme="light"]) body.desk .cl .ic{color:#8fb0f0}}
 @media (min-width:1100px){:root[data-theme="dark"] body.desk .cl .ic{color:#8fb0f0}}
+/* окна на компьютере (с 1.13.1): выше, а окна с плитками, документами и отчётами — шире */
+@media (min-width:1100px){
+  body.desk #sheet .box{max-width:680px;max-height:90vh;display:flex;flex-direction:column}
+  body.desk #sheet .sbody{max-height:none;flex:1;min-height:0}
+  body.desk #sheet .box:has(.sv-tiles,.docprev,.sv-hero,.doc-a4,.rp-sec){max-width:min(960px,92vw)}
+  body.desk #sheet .sv-tiles{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+}
