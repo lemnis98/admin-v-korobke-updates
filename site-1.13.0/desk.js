@@ -1,0 +1,55 @@
+'use strict';
+/* Компьютерный вид (с 1.13.0): на широком экране (от 1100 px) меню слева,
+   список клиентов в левой колонке, карточка клиента, сервер или «Требует внимания» — справа без перехода на другой экран.
+   На телефоне и в узком окне всё как раньше: этот файл ничего не меняет. */
+const DESKQ=matchMedia('(min-width:1100px)');
+const isDesk=()=>DESKQ.matches;
+const DSPLIT=['list','card','srv','alerts'];
+const deskBase=window.render;
+let deskOpen=null;
+function deskHome(){
+  const h=bkNag()+reqNag()+vSum()+vSrvTile();
+  return h+`<div class="card dhint"><div class="dhi">👈</div><div><b>Выберите клиента в списке</b><p class="mut">Карточка откроется здесь. ↑ ↓ — следующий и предыдущий клиент, Esc — закрыть карточку.</p></div></div>`;
+}
+/* список без сводки и плашек: они справа, когда клиент не выбран */
+function deskList(){
+  const k={bkNag,reqNag,vSum,vSrvTile},none=()=>'';
+  window.bkNag=window.reqNag=window.vSum=window.vSrvTile=none;
+  try{return vList()}finally{Object.assign(window,k)}
+}
+window.render=function(){
+  document.body.classList.toggle('desk',isDesk());
+  const split=isDesk()&&DSPLIT.includes(TAB)&&!$('#shell').hidden;
+  document.body.classList.toggle('dsplit',split);
+  if(!split)return deskBase();
+  const lp=$('#app .dpl'),ls=lp?lp.scrollTop:0,rp=$('#app .dpr'),rs=rp?rp.scrollTop:0;
+  const same=deskOpen===TAB+':'+(OPEN||'');deskOpen=TAB+':'+(OPEN||'');
+  const q0=document.activeElement&&document.activeElement.id==='q';
+  deskBase();                               // меню, шапка, значок — как обычно
+  if(!S.ready)return;
+  const right=TAB==='card'?vCard():TAB==='srv'?vSrv():TAB==='alerts'?vAlerts():deskHome();
+  $('#app').innerHTML=`<div class="dsp"><section class="dpl">${deskList()}</section><section class="dpr${TAB==='card'?' dtwo':''}">${right}</section></div>`;
+  const L=$('#app .dpl'),R=$('#app .dpr');
+  L.scrollTop=ls;R.scrollTop=same?rs:0;
+  if(TAB==='card')L.querySelectorAll('.cl').forEach(e=>{if(e.getAttribute('onclick')===`openC('${OPEN}')`){e.classList.add('on');if(!same)deskSee(e)}});
+  if(q0||rFocus){const s=$('#q');if(s){s.focus();s.setSelectionRange(s.value.length,s.value.length)}rFocus=0}
+};
+/* выбранный клиент виден в списке, даже если открыт по ↑ ↓ */
+function deskSee(e){const L=e.closest('.dpl');if(!L)return;const a=e.offsetTop-L.offsetTop,b=a+e.offsetHeight;
+  if(a<L.scrollTop+60)L.scrollTop=Math.max(0,a-60);else if(b>L.scrollTop+L.clientHeight-20)L.scrollTop=b-L.clientHeight+20}
+addEventListener('keydown',e=>{
+  if(!document.body.classList.contains('dsplit')||$('#sheet').classList.contains('show')||e.ctrlKey||e.altKey||e.metaKey)return;
+  const t=e.target,typing=t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.tagName==='SELECT'||t.isContentEditable);
+  if(e.key==='Escape'&&TAB!=='list'&&!typing){e.preventDefault();go('list');return}
+  if((e.key==='ArrowDown'||e.key==='ArrowUp')&&(!typing||t.id==='q')){
+    const ids=[...document.querySelectorAll('.dpl .cl')].map(x=>(x.getAttribute('onclick')||'').match(/^openC\('([^']+)'\)$/)).filter(Boolean).map(m=>m[1]).filter((v,i,a)=>a.indexOf(v)===i);
+    if(!ids.length)return;
+    e.preventDefault();
+    const i=TAB==='card'?ids.indexOf(OPEN):-1,n=e.key==='ArrowDown'?Math.min(ids.length-1,i+1):Math.max(0,i<0?0:i-1);
+    if(t&&t.id==='q')t.blur();
+    openC(ids[n]);
+  }
+});
+DESKQ.addEventListener('change',()=>render());
+document.body.classList.toggle('desk',isDesk());
+if(!$('#shell').hidden)render();
