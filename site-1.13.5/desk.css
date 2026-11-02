@@ -1,0 +1,59 @@
+/* Компьютерный вид (с 1.13.0): только для широкого экрана, телефон не трогаем */
+@media (min-width:1100px){
+  body.desk{padding-bottom:0;padding-left:96px}
+  body.desk nav{top:0;bottom:0;right:auto;width:96px;flex-direction:column;justify-content:flex-start;gap:4px;padding:84px 8px 16px;border-right:1px solid var(--line)}
+  body.desk nav button{width:100%;min-width:0;padding:10px 4px;border-radius:12px;font-size:12px}
+  body.desk nav button:hover{background:var(--chip);color:var(--tx)}
+  body.desk nav button.on{background:var(--chip)}
+  body.desk nav button:last-child{margin-top:auto}
+  body.desk .top{padding:14px 28px;padding-top:calc(14px + env(safe-area-inset-top,0px))}
+  body.desk .top-in{max-width:none}
+  body.desk main{max-width:1180px;margin:20px auto 32px;padding:0 28px}
+  body.desk #sheet{align-items:center}
+  body.desk #sheet .box{border-radius:20px;max-height:88vh;padding:20px 22px}
+  body.desk .cl:hover{background:var(--chip)}
+
+  /* список слева, карточка справа: обе колонки прокручиваются отдельно */
+  body.dsplit{height:100vh;height:100dvh;min-height:0;overflow:hidden}
+  body.dsplit #shell{height:100%;display:flex;flex-direction:column}
+  body.dsplit main{flex:1;min-height:0;max-width:none;width:100%;margin:0;padding:16px 28px 0;display:block}
+  .dsp{height:100%;display:grid;grid-template-columns:minmax(360px,420px) minmax(0,1fr);gap:20px}
+  .dsp>section{min-height:0;overflow-y:auto;display:grid;align-content:start;gap:12px;padding-bottom:20px;scrollbar-width:thin}
+  .dsp .dpl .cl{margin:0 -8px;padding:10px 8px;border-radius:10px}
+  .dsp .dpl .cl.on{background:var(--chip);box-shadow:inset 3px 0 0 var(--g)}
+  .dsp .dpl .acts .xl{display:none}
+  .dsp .dpl .acts .xlm{display:block}
+  /* кнопка «‹ Все клиенты» не нужна: список и так рядом */
+  .dsp .dpr>.card:first-child>.ghost:first-child{display:none}
+  .dsp .dpr>.card:first-child>h2{margin-top:0!important;font-size:22px}
+  .dhint{display:flex;gap:14px;align-items:center}
+  .dhi{font-size:28px}
+}
+/* очень широкий экран: карточка клиента в две колонки */
+@media (min-width:1500px){
+  .dsp{grid-template-columns:440px minmax(0,1fr)}
+  .dcols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start}
+  .dcols>div{display:grid;gap:12px;align-content:start;min-width:0}
+}
+/* буквы на значках клиентов в тёмной теме были почти не видны */
+@media (min-width:1100px) and (prefers-color-scheme:dark){:root:not([data-theme="light"]) body.desk .cl .ic{color:#8fb0f0}}
+@media (min-width:1100px){:root[data-theme="dark"] body.desk .cl .ic{color:#8fb0f0}}
+/* окна на компьютере (с 1.13.1): выше, а окна с плитками, документами и отчётами — шире */
+@media (min-width:1100px){
+  body.desk #sheet .box{max-width:680px;max-height:90vh;display:flex;flex-direction:column}
+  body.desk #sheet .sbody{max-height:none;flex:1;min-height:0}
+  body.desk #sheet .box:has(.sv-tiles,.docprev,.sv-hero,.doc-a4,.rp-sec){max-width:min(960px,92vw)}
+  body.desk #sheet .sv-tiles{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+}
+
+/* 1.13.5: окна на весь экран и кнопка «Закрыть» */
+.dx{display:none}
+@media(min-width:1100px){
+  body.desk #sheet h2.sh{display:flex;align-items:center;gap:12px;flex:none}
+  body.desk #sheet .dx{display:inline-flex;align-items:center;margin-left:auto;flex:none;background:var(--chip);color:var(--tx);border-radius:10px;padding:8px 14px;font-size:14px;font-weight:600}
+  body.desk #sheet .dx:hover{filter:brightness(1.12)}
+  body.desk #sheet .box,body.desk #sheet .sbody{overflow-x:hidden}
+  body.desk #sheet .sbody *{max-width:100%}
+  body.desk #sheet .box.dfull{max-width:none;width:calc(100vw - 48px);height:calc(100vh - 48px);max-height:none;padding:22px 28px}
+  body.desk #sheet .box.dfull .sv-tiles{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+}
